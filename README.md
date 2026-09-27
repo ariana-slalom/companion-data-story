@@ -22,6 +22,22 @@ space. Anyone who has reorganized their life around someone else's diagnosis.
 ## Stack
 Vue 3 + Vite + TypeScript · Vuetify 3 · chart.js + vue-chartjs · Vercel
 
+## Develop
+```bash
+npm install
+npm run dev
+```
+
+## Build
+```bash
+npm run build
+npm run preview
+```
+
+Deployed to Vercel with SPA rewrite rules (see `vercel.json`). The site sits
+behind a client-side password screen — a lightweight gate for a private
+preview link, not a substitute for real authentication.
+
 ## Disclaimer
 This project is an educational resource and design exploration. It does not
 replace clinical medical advice, professional diagnosis, or treatment direction.
