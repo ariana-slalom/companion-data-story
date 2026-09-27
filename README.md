@@ -46,4 +46,4 @@ replace clinical medical advice, professional diagnosis, or treatment direction.
 
 ## Protogen
 Part of the Slalom Protogen certification series.
-Designer: Ariana Deryss
+Designer: Ariana de Ryss
