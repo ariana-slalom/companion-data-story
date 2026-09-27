@@ -38,6 +38,8 @@ Deployed to Vercel with SPA rewrite rules (see `vercel.json`). The site sits
 behind a client-side password screen — a lightweight gate for a private
 preview link, not a substitute for real authentication.
 
+Live site: https://companion-data-story-ekjk.vercel.app/
+
 ## Disclaimer
 This project is an educational resource and design exploration. It does not
 replace clinical medical advice, professional diagnosis, or treatment direction.
