@@ -120,6 +120,14 @@
 			</div>
 		</section>
 
+		<div
+			class="reveal-section day-in-life-reveal"
+			data-section-id="day-in-life"
+			:class="{ 'is-visible': visibleSections.has('day-in-life') }"
+		>
+			<DayInLife />
+		</div>
+
 		<footer class="story-footer">
 			<p>Copyright 2026 Ariana de Ryss · Protogen 302 · Made with Copilots, a Garden Seed Stash, and far too much tea ☕</p>
 			<p class="footer-disclaimer">
@@ -135,6 +143,7 @@ import { ref, onMounted } from 'vue'
 import { conditions } from '../data/conditions'
 import { globalStats } from '../data/globalStats'
 import type { Condition } from '../types'
+import DayInLife from '../components/DayInLife.vue'
 
 const selectedCondition = ref<Condition>(conditions[0])
 const visibleSections = ref<Set<string>>(new Set())
@@ -232,7 +241,18 @@ label {
 	transition: all 0.6s ease;
 }
 
+.reveal-section {
+	opacity: 0;
+	transform: translateY(24px);
+	transition: all 0.6s ease;
+}
+
 .story-section.is-visible {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.reveal-section.is-visible {
 	opacity: 1;
 	transform: translateY(0);
 }
