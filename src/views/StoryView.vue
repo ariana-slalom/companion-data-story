@@ -219,6 +219,11 @@
       </div>
     </section>
 
+    <CompanionPrototype
+      :condition-label="selectedCondition.label"
+      :condition-accent="activeTheme.accent"
+    />
+
     <!-- FOOTER -->
     <footer class="story-footer">
       <p>Copyright 2026 Ariana de Ryss · Protogen 302 ·
@@ -248,6 +253,7 @@ import { conditions } from '../data/conditions'
 import { globalStats } from '../data/globalStats'
 import type { Condition } from '../types'
 import DayInLife from '../components/DayInLife.vue'
+import CompanionPrototype from '../components/CompanionPrototype.vue'
 
 ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend)
 
