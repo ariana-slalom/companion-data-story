@@ -972,7 +972,10 @@ void genderChartOptions
 .split-container {
   display: flex;
   align-items: stretch;
+  max-width: 1400px;
   min-height: 80vh;
+  margin-left: auto;
+  margin-right: auto;
   padding: 0 0 80px;
 }
 
