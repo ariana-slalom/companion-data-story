@@ -1,39 +1,38 @@
 <template>
   <div class="day-section">
-    <div class="day-content">
-      <h2>A day on the support side.</h2>
-      <p class="day-subtext">The same day. Two perspectives. Toggle between them.</p>
+    <div class="section-inner">
+      <h2 class="day-headline">A day on the support side.</h2>
+      <p class="day-subtext">
+        The same day. Two people living it completely differently.
+      </p>
 
-      <div class="view-toggle" role="group" aria-label="Choose a perspective">
-        <button
-          type="button"
-          class="toggle-button patient-toggle"
-          :class="{ active: activeView === 'patient' }"
-          @click="activeView = 'patient'"
-        >
-          Their experience
-        </button>
-        <button
-          type="button"
-          class="toggle-button companion-toggle"
-          :class="{ active: activeView === 'companion' }"
-          @click="activeView = 'companion'"
-        >
-          Your experience
-        </button>
+      <div class="split-header">
+        <div class="split-col-label patient-label">Their day</div>
+        <div class="split-divider-label">time</div>
+        <div class="split-col-label companion-label">Your day</div>
       </div>
 
       <div class="timeline">
-        <div v-for="event in dayEvents" :key="event.time" class="timeline-event">
-          <div class="time-label">{{ event.time }}</div>
-          <div class="timeline-connector">
-            <span class="timeline-dot" :class="`severity-${event.severity}`"></span>
-          </div>
-          <Transition name="experience-fade" mode="out-in">
-            <p :key="`${event.time}-${activeView}`" class="experience-text">
-              {{ activeView === 'patient' ? event.patientExperience : event.companionExperience }}
+        <div
+          v-for="event in dayEvents"
+          :key="event.time"
+          class="timeline-row"
+        >
+          <div class="timeline-patient">
+            <p class="event-text" :class="event.severity">
+              {{ event.patientExperience }}
             </p>
-          </Transition>
+          </div>
+          <div class="timeline-center">
+            <span class="time-label">{{ event.time }}</span>
+            <div class="center-line"></div>
+            <div class="severity-dot" :class="event.severity"></div>
+          </div>
+          <div class="timeline-companion">
+            <p class="event-text companion" :class="event.severity">
+              {{ event.companionExperience }}
+            </p>
+          </div>
         </div>
       </div>
 
@@ -45,159 +44,55 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
 import { dayEvents } from '../data/dayInLife'
-import type { DayEvent } from '../types'
-
-const activeView = ref<'patient' | 'companion'>('companion')
-
-void (dayEvents satisfies DayEvent[])
 </script>
 
 <style scoped>
-.day-section {
-  padding: 80px 24px;
-  background: #f2ede6;
-}
+.day-section { background: #F2EDE6; padding: 80px 24px; }
+.section-inner { max-width: 960px; margin: 0 auto; }
+.day-headline { font-family: 'Playfair Display', serif; font-size: 2rem;
+  color: #2C2825; margin-bottom: 8px; }
+.day-subtext { font-family: 'DM Sans', sans-serif; font-size: 1rem;
+  color: #6B5F58; margin-bottom: 40px; }
 
-.day-content {
-  max-width: 760px;
-  margin: 0 auto;
-}
+.split-header { display: grid; grid-template-columns: 1fr 80px 1fr;
+  gap: 16px; margin-bottom: 8px; }
+.split-col-label { font-family: 'DM Sans', sans-serif; font-size: 0.75rem;
+  font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+  color: #6B5F58; }
+.patient-label { text-align: right; }
+.companion-label { text-align: left; }
+.split-divider-label { font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem; color: #E0D8CF; text-align: center;
+  text-transform: uppercase; letter-spacing: 0.08em; }
 
-h2 {
-  margin: 0 0 8px;
-  color: #2c2825;
-  font-family: 'Playfair Display', serif;
-  font-size: 2rem;
-  font-weight: 400;
-  line-height: 1.15;
-}
+.timeline { display: flex; flex-direction: column; gap: 0; }
+.timeline-row { display: grid; grid-template-columns: 1fr 80px 1fr;
+  gap: 16px; align-items: start; padding: 20px 0;
+  border-bottom: 1px solid #E0D8CF; }
+.timeline-row:last-child { border-bottom: none; }
 
-.day-subtext {
-  margin: 0 0 32px;
-  color: #6b5f58;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1rem;
-}
+.timeline-patient { text-align: right; }
+.timeline-companion { text-align: left; }
 
-.view-toggle {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 48px;
-}
+.timeline-center { display: flex; flex-direction: column;
+  align-items: center; gap: 6px; padding-top: 4px; }
+.time-label { font-family: 'DM Sans', sans-serif; font-size: 0.75rem;
+  color: #6B5F58; white-space: nowrap; }
+.center-line { width: 1px; background: #E0D8CF; flex: 1; min-height: 8px; }
+.severity-dot { width: 10px; height: 10px; border-radius: 50%; }
 
-.toggle-button {
-  padding: 10px 24px;
-  border: 1px solid #e0d8cf;
-  background: #faf8f5;
-  color: #6b5f58;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.875rem;
-  cursor: pointer;
-}
+.severity-dot.low { background: #7A9E8E; }
+.severity-dot.medium { background: #C9A96E; }
+.severity-dot.high { background: #C97A7A; }
 
-.toggle-button.active {
-  border-color: #2c2825;
-  background: #2c2825;
-  color: #faf8f5;
-}
+.event-text { font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+  line-height: 1.6; color: #2C2825; margin: 0; }
+.event-text.high { color: #2C2825; font-weight: 500; }
+.event-text.companion { color: #2C2825; }
 
-.patient-toggle {
-  border-radius: 20px 0 0 20px;
-}
-
-.companion-toggle {
-  border-radius: 0 20px 20px 0;
-}
-
-.timeline {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.timeline-event {
-  display: flex;
-  gap: 24px;
-  min-height: 64px;
-}
-
-.time-label {
-  flex: 0 0 72px;
-  padding-top: 4px;
-  color: #6b5f58;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.875rem;
-}
-
-.timeline-connector {
-  position: relative;
-  display: flex;
-  flex: 0 0 2px;
-  justify-content: center;
-  align-items: flex-start;
-  background: #e0d8cf;
-}
-
-.timeline-dot {
-  position: absolute;
-  top: 4px;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  transform: translateX(-50%);
-}
-
-.severity-low {
-  background: #7a9e8e;
-}
-
-.severity-medium {
-  background: #c9a96e;
-}
-
-.severity-high {
-  background: #c97a7a;
-}
-
-.experience-text {
-  flex: 1;
-  margin: 0;
-  color: #2c2825;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 1rem;
-  line-height: 1.7;
-}
-
-.closing-line {
-  max-width: 560px;
-  margin: 48px auto 0;
-  color: #6b5f58;
-  font-family: 'Playfair Display', serif;
-  font-size: 1.125rem;
-  font-style: italic;
-  text-align: center;
-}
-
-.experience-fade-enter-active,
-.experience-fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.experience-fade-enter-from,
-.experience-fade-leave-to {
-  opacity: 0;
-}
-
-@media (max-width: 600px) {
-  .day-section {
-    padding: 64px 24px;
-  }
-
-  .timeline-event {
-    gap: 16px;
-  }
-}
+.closing-line { font-family: 'Playfair Display', serif; font-style: italic;
+  font-size: 1.125rem; color: #6B5F58; text-align: center;
+  margin-top: 48px; max-width: 560px; margin-left: auto;
+  margin-right: auto; }
 </style>
