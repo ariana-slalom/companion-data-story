@@ -19,19 +19,19 @@
         <p class="hook-data-intro">The reality they're both navigating:</p>
         <div class="hook-stats-row">
           <div class="stat-block">
-            <span class="stat-number">~80%</span>
+            <span class="stat-number">~{{ animatedStats.percent }}%</span>
             <span class="stat-label">of autoimmune patients are women</span>
           </div>
           <div class="stat-block">
-            <span class="stat-number">4.6</span>
+            <span class="stat-number">{{ (animatedStats.years / 10).toFixed(1) }}</span>
             <span class="stat-label">average years to correct diagnosis</span>
           </div>
           <div class="stat-block">
-            <span class="stat-number">45%</span>
+            <span class="stat-number">{{ animatedStats.psychosomatic }}%</span>
             <span class="stat-label">told symptoms were psychosomatic</span>
           </div>
           <div class="stat-block">
-            <span class="stat-number">63M</span>
+            <span class="stat-number">{{ animatedStats.caregivers }}M</span>
             <span class="stat-label">Americans are unpaid caregivers</span>
           </div>
         </div>
@@ -94,6 +94,10 @@
               :key="'patient-' + index"
               class="journey-step"
             >
+              <div
+                class="phase-icon"
+                v-html="phaseIcons[step.phase] || phaseIcons['Living with it']"
+              ></div>
               <div class="step-phase">{{ step.phase }}</div>
               <p class="step-text">{{ step.patientMoment }}</p>
               <div class="step-stat">
@@ -131,6 +135,10 @@
               :key="'companion-' + index"
               class="journey-step"
             >
+              <div
+                class="phase-icon"
+                v-html="phaseIcons[step.phase] || phaseIcons['Living with it']"
+              ></div>
               <div
                 class="step-phase companion-phase"
                 :style="{ color: activeTheme.accent }"
@@ -435,6 +443,16 @@ const journeySteps: Record<string, Array<{
   ]
 }
 
+const phaseIcons: Record<string, string> = {
+  'The first symptoms': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5"/><path d="M12 8v4l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  'The diagnostic odyssey': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  'The diagnosis': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  'Living with it': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  'The long game': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  'Learning the system': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+  'The daily reality': `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M16 2v4M8 2v4M3 10h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`
+}
+
 const activeJourney = computed(() =>
   journeySteps[selectedCondition.value.id] || journeySteps.eds
 )
@@ -558,6 +576,28 @@ const rightOpacity = computed(() =>
 const selectedCondition = ref<Condition>(conditions[0])
 const activeTheme = computed(() => conditionThemes[selectedCondition.value.id])
 
+const animatedStats = ref({
+  percent: 0,
+  years: 0,
+  psychosomatic: 0,
+  caregivers: 0
+})
+
+const animateValue = (
+  key: keyof typeof animatedStats.value,
+  target: number,
+  duration: number = 1500
+) => {
+  const start = performance.now()
+  const tick = (now: number) => {
+    const progress = Math.min((now - start) / duration, 1)
+    const eased = 1 - Math.pow(1 - progress, 3)
+    animatedStats.value[key] = Math.round(eased * target)
+    if (progress < 1) requestAnimationFrame(tick)
+  }
+  requestAnimationFrame(tick)
+}
+
 watch(activeTheme, (theme) => {
   document.documentElement.style.setProperty('--condition-accent', theme.accent)
   document.documentElement.style.setProperty('--condition-deep', theme.deep)
@@ -619,6 +659,22 @@ onMounted(() => {
   )
 
   document.querySelectorAll('.reveal-section').forEach((section) => observer.observe(section))
+
+  const hookEl = document.querySelector('.act-hook')
+  if (hookEl) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          animateValue('percent', 80)
+          animateValue('years', 46, 1200)
+          animateValue('psychosomatic', 45)
+          animateValue('caregivers', 63)
+          observer.disconnect()
+        }
+      })
+    }, { threshold: 0.3 })
+    observer.observe(hookEl)
+  }
 })
 
 void Doughnut
@@ -837,6 +893,19 @@ void genderChartOptions
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.phase-icon {
+  width: 24px;
+  height: 24px;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+  color: #6B5F58;
+}
+
+.companion-phase ~ .phase-icon,
+.journey-step:has(.companion-phase) .phase-icon {
+  color: var(--condition-accent);
 }
 
 .step-phase {
