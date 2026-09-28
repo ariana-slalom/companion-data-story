@@ -6,19 +6,37 @@
       <div class="act-inner">
         <p class="eyebrow">The Support Side</p>
         <h1 class="hook-headline">
-          Nearly 80% of autoimmune disease<br>patients are women.
+          Chronic illness is not a solo sport.
         </h1>
         <p class="hook-sub">
-          The average time to a correct diagnosis is 4.6 years.
-          Four or more doctors. Nearly half were told their symptoms
-          were psychosomatic before anyone ran the right test.
+          One person lives with the diagnosis. Another person helps hold them up —
+          reorganizing their life, absorbing the uncertainty, showing up again and
+          again without a map or a manual.
           <br><br>
-          This is not just their story.
-          <br>
-          It's the story of everyone beside them.
+          That second person is who this is for.
         </p>
+        <div class="hook-divider"></div>
+        <p class="hook-data-intro">The reality they're both navigating:</p>
+        <div class="hook-stats-row">
+          <div class="stat-block">
+            <span class="stat-number">~80%</span>
+            <span class="stat-label">of autoimmune patients are women</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-number">4.6</span>
+            <span class="stat-label">average years to correct diagnosis</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-number">45%</span>
+            <span class="stat-label">told symptoms were psychosomatic</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-number">63M</span>
+            <span class="stat-label">Americans are unpaid caregivers</span>
+          </div>
+        </div>
         <p class="source-line">
-          Source: American Autoimmune Related Diseases Association (AARDA)
+          Sources: AARDA · AARP & National Alliance for Caregiving, 2025
         </p>
       </div>
     </section>
@@ -469,11 +487,11 @@ void genderChartOptions
 
 /* HOOK */
 .act-hook {
-  min-height: 100vh;
+  min-height: calc(100vh - 72px);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 80px 48px;
+  padding: 56px 48px;
   background: #FAF8F5;
   transition: background 0.6s ease;
 }
@@ -505,6 +523,50 @@ void genderChartOptions
   font-family: 'DM Sans', sans-serif;
   font-size: 0.75rem;
   color: #6B5F58;
+}
+
+.hook-divider {
+  width: 48px;
+  height: 2px;
+  background: var(--condition-accent);
+  margin: 32px auto;
+  transition: background 0.6s ease;
+}
+.hook-data-intro {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #6B5F58;
+  margin-bottom: 24px;
+}
+.hook-stats-row {
+  display: flex;
+  gap: 32px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.stat-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+.stat-number {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.25rem;
+  color: #2C2825;
+  line-height: 1;
+}
+.stat-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  color: #6B5F58;
+  text-align: center;
+  max-width: 120px;
+  line-height: 1.4;
 }
 
 /* CONDITION FILTER */
