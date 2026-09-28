@@ -181,7 +181,7 @@ const moodResponses: Record<string, string> = {
   good: 'Hold onto this one. Good days are data too.'
 }
 
-const narrativeContent = {
+const narrativeContent = computed(() => ({
   today: {
     eyebrow: 'The daily check-in',
     headline: 'Start with yourself.',
@@ -194,19 +194,30 @@ const narrativeContent = {
     eyebrow: 'The flare protocol',
     headline: 'Know what to do before you need to.',
     body: "Flares are unpredictable. The companion's response shouldn't be. This screen gives you a pre-built protocol — not a rigid checklist, but a gentle structure when everything feels urgent.",
-    stat: '70%',
-    statLabel: 'of T1D parent caregivers report moderate-to-severe burden — much of it tied to crisis moments',
+    stat: props.conditionLabel === 'Type 1 Diabetes' ? '70%' : '64%',
+    statLabel: props.conditionLabel === 'Type 1 Diabetes'
+      ? 'of T1D parent caregivers report moderate-to-severe burden'
+      : 'of companions report high burden during flare periods',
     insight: 'The design principle: reduce cognitive load at the exact moment when cognitive load is highest.'
   },
   learn: {
     eyebrow: 'The education layer',
     headline: 'Understanding is part of showing up.',
     body: 'Companions who understand the condition show up better — and feel less helpless. This section gives you the language, the context, and the reminder that protecting yourself is part of the job.',
-    stat: '88%',
-    statLabel: 'of EDS patients were told they were making it up — companions absorb that disbelief too',
+    stat: props.conditionLabel === 'EDS / HSD' ? '88%'
+      : props.conditionLabel === 'Lupus (SLE)' ? '45%'
+      : props.conditionLabel === "Hashimoto's" ? '5 yrs'
+      : '70%',
+    statLabel: props.conditionLabel === 'EDS / HSD'
+      ? 'of EDS patients were told they were making it up — companions absorb that disbelief too'
+      : props.conditionLabel === 'Lupus (SLE)'
+      ? 'of lupus patients were told symptoms were psychosomatic before correct diagnosis'
+      : props.conditionLabel === "Hashimoto's"
+      ? "average years before Hashimoto's is correctly identified — often misread as depression"
+      : 'of T1D parent caregivers report moderate-to-severe burden',
     insight: 'The closing reminder — "you cannot pour from an empty vessel" — is the core philosophy of the entire app.'
   }
-}
+}))
 
 const conditionNote = computed(() =>
   `Supporting someone with ${props.conditionLabel}? Today is a good day to check in — not about symptoms, but about them as a person.`
