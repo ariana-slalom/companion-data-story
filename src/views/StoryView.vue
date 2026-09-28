@@ -73,6 +73,21 @@
           Move your cursor left to follow their experience.
           Move right to see yours.
         </p>
+        <div class="condition-stats-bar">
+          <div
+            v-for="stat in conditionKeyStats"
+            :key="stat.label"
+            class="condition-stat"
+          >
+            <span
+              class="condition-stat-number"
+              :style="{ color: activeTheme.accent }"
+            >
+              {{ stat.number }}
+            </span>
+            <span class="condition-stat-label">{{ stat.label }}</span>
+          </div>
+        </div>
       </div>
 
       <div class="split-container">
@@ -203,14 +218,36 @@
           </div>
         </div>
 
+        <div class="caregiving-pressure">
+          <p class="pressure-label">The job has a measurable weight</p>
+          <div class="pressure-grid">
+            <div class="pressure-stat">
+              <span class="pressure-number">27</span>
+              <span class="pressure-unit">hours / week</span>
+              <span class="pressure-copy">average time spent providing care</span>
+            </div>
+            <div class="pressure-stat">
+              <span class="pressure-number">57%</span>
+              <span class="pressure-copy">of caregivers report a high-intensity care situation</span>
+            </div>
+            <div class="pressure-stat">
+              <span class="pressure-number">29%</span>
+              <span class="pressure-copy">are sandwich caregivers, supporting an adult and a child</span>
+            </div>
+          </div>
+          <p class="source-line">
+            Source: Caregiving in the United States 2025, AARP & National Alliance for Caregiving
+          </p>
+        </div>
+
         <div class="gap-statement">
           <p class="gap-pull">
-            "The most common thing I hear from autoimmune patients is not
-            'I am in pain.' It is 'Nobody believed me.'"
+            Caregiving is not a side task. For many people, it is a second
+            job that has never been named, trained, or supported.
           </p>
           <p class="gap-pull-source">
-            — Dr. Elena Rostova, Reproductive Endocrinologist
-            <span class="source-line"> · Women's Health Association, 2026</span>
+            A 2025 national study found that family caregivers provide an average
+            of 27 hours of care each week.
           </p>
         </div>
 
@@ -457,6 +494,35 @@ const activeJourney = computed(() =>
   journeySteps[selectedCondition.value.id] || journeySteps.eds
 )
 
+const conditionKeyStats = computed(() => {
+  const stats: Record<string, Array<{
+    number: string
+    label: string
+  }>> = {
+    eds: [
+      { number: '10+', label: 'years avg to diagnosis' },
+      { number: '88%', label: 'told they were making it up' },
+      { number: '10+', label: 'alternative diagnoses on avg' }
+    ],
+    lupus: [
+      { number: '6', label: 'years avg to diagnosis' },
+      { number: '4+', label: 'doctors before correct diagnosis' },
+      { number: '45%', label: 'told symptoms were psychosomatic' }
+    ],
+    hashimotos: [
+      { number: '5', label: 'years avg to diagnosis' },
+      { number: '#1', label: 'most common autoimmune disease in US' },
+      { number: '~14M', label: 'Americans affected' }
+    ],
+    t1d: [
+      { number: '70%', label: 'of T1D parents report moderate-severe burden' },
+      { number: '24/7', label: 'monitoring reality for most caregivers' },
+      { number: '1 in 3', label: 'T1D parents show clinical anxiety symptoms' }
+    ]
+  }
+  return stats[selectedCondition.value.id] || stats.eds
+})
+
 const diagnosisChartData = computed(() => ({
   labels: ['EDS / HSD', 'Lupus (SLE)', "Hashimoto's", 'Type 1 Diabetes'],
   datasets: [{
@@ -566,11 +632,11 @@ const rightWidth = computed(() => {
 })
 
 const leftOpacity = computed(() =>
-  mousePosition.value === 'right' ? '0.4' : '1'
+  mousePosition.value === 'right' ? '0.5' : '1'
 )
 
 const rightOpacity = computed(() =>
-  mousePosition.value === 'left' ? '0.4' : '1'
+  mousePosition.value === 'left' ? '0.5' : '1'
 )
 
 const selectedCondition = ref<Condition>(conditions[0])
@@ -855,6 +921,52 @@ void genderChartOptions
   font-size: 0.9rem;
 }
 
+.condition-stats-bar {
+  display: flex;
+  gap: 0;
+  justify-content: center;
+  max-width: 640px;
+  margin-top: 32px;
+  margin-right: auto;
+  margin-left: auto;
+  overflow: hidden;
+  border: 1px solid #E0D8CF;
+  border-radius: 12px;
+}
+
+.condition-stat {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 20px 16px;
+  border-right: 1px solid #E0D8CF;
+  background: rgba(255, 255, 255, 0.6);
+  transition: background 0.3s ease;
+}
+
+.condition-stat:last-child {
+  border-right: none;
+}
+
+.condition-stat-number {
+  color: var(--condition-accent);
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem;
+  line-height: 1;
+  transition: color 0.6s ease;
+}
+
+.condition-stat-label {
+  max-width: 120px;
+  color: #6B5F58;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  text-align: center;
+}
+
 .split-container {
   display: flex;
   align-items: stretch;
@@ -1069,6 +1181,71 @@ void genderChartOptions
   font-size: 0.8rem;
 }
 
+.caregiving-pressure {
+  max-width: 760px;
+  margin: 0 auto 64px;
+  padding: 24px 0 0;
+  border-top: 1px solid #E0D8CF;
+}
+
+.pressure-label {
+  margin-bottom: 20px;
+  color: var(--condition-accent);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.pressure-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  overflow: hidden;
+  border: 1px solid #E0D8CF;
+  border-radius: 12px;
+  background: #E0D8CF;
+}
+
+.pressure-stat {
+  min-height: 140px;
+  padding: 20px 16px;
+  background: rgba(255, 255, 255, 0.55);
+  text-align: center;
+}
+
+.pressure-number {
+  display: block;
+  margin-bottom: 4px;
+  color: #2C2825;
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.pressure-unit {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--condition-accent);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.pressure-copy {
+  display: block;
+  max-width: 170px;
+  margin: 0 auto;
+  color: #6B5F58;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
 .gap-statement {
   max-width: 640px;
   margin: 0 auto 64px;
@@ -1091,6 +1268,7 @@ void genderChartOptions
   color: #6B5F58;
   font-family: 'DM Sans', sans-serif;
   font-size: 0.8rem;
+  line-height: 1.5;
 }
 
 .gap-closing {
@@ -1111,6 +1289,16 @@ void genderChartOptions
   font-family: 'DM Sans', sans-serif;
   font-size: 1rem;
   line-height: 1.7;
+}
+
+@media (max-width: 640px) {
+  .pressure-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pressure-stat {
+    min-height: auto;
+  }
 }
 
 /* FOOTER */
