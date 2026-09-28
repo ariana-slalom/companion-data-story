@@ -602,8 +602,10 @@ const burdenChartOptions = {
     x: {
       grid: { display: false },
       ticks: {
-        font: { family: 'DM Sans', size: 11 },
-        color: '#2C2825'
+        font: { family: 'DM Sans', size: 10 },
+        color: '#2C2825',
+        maxRotation: 30,
+        minRotation: 30
       }
     }
   }
