@@ -151,13 +151,71 @@
       </div>
     </section>
 
-    <!-- ACT 3: THE GAP — placeholder -->
+    <!-- ACT 3: THE GAP -->
     <section class="act act-gap">
-      <div class="gap-placeholder">
-        <p style="font-family:'DM Sans',sans-serif; color:#6B5F58;
-          text-align:center; padding:80px 24px;">
-          Gap + prototype coming in next prompt.
-        </p>
+      <div class="gap-inner">
+        <div class="gap-intro">
+          <p class="gap-eyebrow">The invisible data</p>
+          <h2 class="gap-headline">
+            The research exists.<br>The tools don't.
+          </h2>
+          <p class="gap-body">
+            1 in 4 American adults — 63 million people — are caregivers.
+            The burden they carry is well documented. The apps built
+            specifically for them are almost nonexistent.
+          </p>
+          <p class="source-line">Source: AARP & National Alliance for Caregiving, 2025</p>
+        </div>
+
+        <div class="charts-row">
+          <div class="chart-block">
+            <p class="chart-title">How long the wait is</p>
+            <p class="chart-sub">Average years from first symptoms to correct diagnosis</p>
+            <Bar
+              :data="diagnosisChartData"
+              :options="diagnosisChartOptions"
+              style="max-height: 220px"
+            />
+            <p class="source-line">
+              Sources: Ehlers-Danlos Society, Lupus Foundation, AARDA, JDRF
+            </p>
+          </div>
+
+          <div class="chart-block">
+            <p class="chart-title">What companions carry</p>
+            <p class="chart-sub">Reporting moderate-to-severe caregiver burden</p>
+            <Bar
+              :data="burdenChartData"
+              :options="burdenChartOptions"
+              style="max-height: 220px"
+            />
+            <p class="source-line">
+              Sources: Heliyon 2024, Lupus Foundation, AARP & NAC 2025
+            </p>
+          </div>
+        </div>
+
+        <div class="gap-statement">
+          <p class="gap-pull">
+            "The most common thing I hear from autoimmune patients is not
+            'I am in pain.' It is 'Nobody believed me.'"
+          </p>
+          <p class="gap-pull-source">
+            — Dr. Elena Rostova, Reproductive Endocrinologist
+            <span class="source-line"> · Women's Health Association, 2026</span>
+          </p>
+        </div>
+
+        <div class="gap-closing">
+          <h2 class="gap-closing-headline">
+            What if there was something built for you?
+          </h2>
+          <p class="gap-closing-body">
+            Not a clinical tool. Not another patient app with a "caregiver"
+            tab buried in settings. Something that starts with your experience
+            and builds from there. Here's what it could look like.
+          </p>
+        </div>
       </div>
     </section>
 
@@ -176,14 +234,22 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref, watch } from 'vue'
-import { Doughnut } from 'vue-chartjs'
-import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js'
+import { Bar, Doughnut } from 'vue-chartjs'
+import {
+  ArcElement,
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Tooltip,
+} from 'chart.js'
 import { conditions } from '../data/conditions'
 import { globalStats } from '../data/globalStats'
 import type { Condition } from '../types'
 import DayInLife from '../components/DayInLife.vue'
 
-ChartJS.register(ArcElement, Tooltip)
+ChartJS.register(ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend)
 
 const conditionThemes: Record<string, {
   accent: string
@@ -366,6 +432,92 @@ const journeySteps: Record<string, Array<{
 const activeJourney = computed(() =>
   journeySteps[selectedCondition.value.id] || journeySteps.eds
 )
+
+const diagnosisChartData = computed(() => ({
+  labels: ['EDS / HSD', 'Lupus (SLE)', "Hashimoto's", 'Type 1 Diabetes'],
+  datasets: [{
+    label: 'Years to diagnosis',
+    data: [10, 6, 5, 0.5],
+    backgroundColor: [
+      '#C97A7A', '#A85C6E', '#C9A96E', '#7A9E8E'
+    ],
+    borderRadius: 6,
+    borderWidth: 0
+  }]
+}))
+
+const diagnosisChartOptions = {
+  indexAxis: 'y' as const,
+  responsive: true,
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      callbacks: {
+        label: (ctx: any) => {
+          if (ctx.raw === 0.5) return 'Often diagnosed in acute crisis'
+          return ctx.raw + ' years avg to diagnosis'
+        }
+      }
+    }
+  },
+  scales: {
+    x: {
+      grid: { color: '#E0D8CF' },
+      ticks: {
+        font: { family: 'DM Sans', size: 11 },
+        color: '#6B5F58'
+      }
+    },
+    y: {
+      grid: { display: false },
+      ticks: {
+        font: { family: 'DM Sans', size: 12 },
+        color: '#2C2825'
+      }
+    }
+  }
+}
+
+const burdenChartData = {
+  labels: ['T1D Parents', 'EDS Companions', 'Lupus Partners', 'General Chronic Illness'],
+  datasets: [{
+    label: 'Report moderate-to-severe burden',
+    data: [70, 64, 58, 53],
+    backgroundColor: ['#7A9E8E', '#C97A7A', '#A85C6E', '#C9A96E'],
+    borderRadius: 6,
+    borderWidth: 0
+  }]
+}
+
+const burdenChartOptions = {
+  responsive: true,
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      callbacks: {
+        label: (ctx: any) => ctx.raw + '% report moderate-to-severe burden'
+      }
+    }
+  },
+  scales: {
+    y: {
+      max: 100,
+      grid: { color: '#E0D8CF' },
+      ticks: {
+        font: { family: 'DM Sans', size: 11 },
+        color: '#6B5F58',
+        callback: (val: any) => val + '%'
+      }
+    },
+    x: {
+      grid: { display: false },
+      ticks: {
+        font: { family: 'DM Sans', size: 11 },
+        color: '#2C2825'
+      }
+    }
+  }
+}
 
 const mousePosition = ref<'left' | 'center' | 'right'>('center')
 
@@ -770,6 +922,120 @@ void genderChartOptions
   flex-shrink: 0;
   border-radius: 50%;
   transition: background 0.6s ease;
+}
+
+.act-gap {
+  background: #FAF8F5;
+  padding: 80px 0;
+}
+
+.gap-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 48px;
+}
+
+.gap-intro {
+  max-width: 640px;
+  margin: 0 auto 64px;
+  text-align: center;
+}
+
+.gap-eyebrow {
+  margin-bottom: 12px;
+  color: var(--condition-accent);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.6s ease;
+}
+
+.gap-headline {
+  margin-bottom: 16px;
+  color: #2C2825;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  line-height: 1.25;
+}
+
+.gap-body {
+  color: #6B5F58;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.charts-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 64px;
+}
+
+.chart-block {
+  padding: 32px;
+  border-radius: 12px;
+  background: #F2EDE6;
+}
+
+.chart-title {
+  margin-bottom: 4px;
+  color: #2C2825;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.125rem;
+}
+
+.chart-sub {
+  margin-bottom: 20px;
+  color: #6B5F58;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+}
+
+.gap-statement {
+  max-width: 640px;
+  margin: 0 auto 64px;
+  padding: 48px 0;
+  border-top: 1px solid #E0D8CF;
+  border-bottom: 1px solid #E0D8CF;
+  text-align: center;
+}
+
+.gap-pull {
+  margin-bottom: 16px;
+  color: #2C2825;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.gap-pull-source {
+  color: #6B5F58;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+}
+
+.gap-closing {
+  max-width: 640px;
+  margin: 64px auto 0;
+  text-align: center;
+}
+
+.gap-closing-headline {
+  margin-bottom: 16px;
+  color: #2C2825;
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+}
+
+.gap-closing-body {
+  color: #6B5F58;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 /* FOOTER */
