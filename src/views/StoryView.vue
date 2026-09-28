@@ -17,16 +17,43 @@
 
 		<section
 			id="hook"
-			class="story-section reveal-section hook-section"
+			class="reveal-section story-section hook-section"
 			data-section-id="hook"
 			:class="{ 'is-visible': visibleSections.has('hook') }"
 		>
-			<div class="section-content">
-				<h1>Nearly 80% of autoimmune disease patients are women.</h1>
-				<p class="section-lede">
-					The average time to a correct diagnosis is 4.6 years. Four or more doctors.
-					And nearly half were told their symptoms were psychosomatic before anyone ran
-					the right test.
+			<div class="section-inner">
+				<div class="hook-visual">
+					<div class="donut-wrapper">
+						<Doughnut
+							:data="genderChartData"
+							:options="genderChartOptions"
+							style="width: 200px; height: 200px"
+						/>
+						<div class="donut-label">
+							<span class="counter">{{ displayPercent }}%</span>
+							<span class="counter-sub">women</span>
+						</div>
+					</div>
+					<div class="hook-stats">
+						<div class="stat-block">
+							<span class="stat-number">4.6</span>
+							<span class="stat-label">average years to diagnosis</span>
+						</div>
+						<div class="stat-block">
+							<span class="stat-number">4+</span>
+							<span class="stat-label">doctors before correct diagnosis</span>
+						</div>
+						<div class="stat-block">
+							<span class="stat-number">45%</span>
+							<span class="stat-label">told symptoms were psychosomatic</span>
+						</div>
+					</div>
+				</div>
+				<h1 class="hook-headline">Nearly 80% of autoimmune disease patients are women.</h1>
+				<p class="hook-body">
+					The average time to a correct diagnosis is 4.6 years. Four or more doctors. And
+					nearly half were told their symptoms were psychosomatic before anyone ran the right
+					test.
 				</p>
 				<p class="source-line">Source: American Autoimmune Related Diseases Association (AARDA)</p>
 			</div>
@@ -139,14 +166,54 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
+import { Doughnut } from 'vue-chartjs'
+import { ArcElement, Chart as ChartJS, Tooltip } from 'chart.js'
 import { conditions } from '../data/conditions'
 import { globalStats } from '../data/globalStats'
 import type { Condition } from '../types'
 import DayInLife from '../components/DayInLife.vue'
 
+ChartJS.register(ArcElement, Tooltip)
+
 const selectedCondition = ref<Condition>(conditions[0])
 const visibleSections = ref<Set<string>>(new Set())
+const displayPercent = ref(0)
+
+const genderChartData = computed(() => ({
+	datasets: [
+		{
+			data: [80, 20],
+			backgroundColor: ['#C97A7A', '#E0D8CF'],
+			borderWidth: 0,
+			borderRadius: 4,
+		},
+	],
+}))
+
+const genderChartOptions = {
+	cutout: '72%',
+	plugins: { tooltip: { enabled: false } },
+	animation: { animateRotate: true, duration: 1200 },
+}
+
+function animatePercent() {
+	const startTime = performance.now()
+
+	function frame(currentTime: number) {
+		const progress = Math.min((currentTime - startTime) / 1200, 1)
+		const easedProgress = 1 - Math.pow(1 - progress, 4)
+		displayPercent.value = Math.round(easedProgress * 80)
+
+		if (progress < 1) requestAnimationFrame(frame)
+	}
+
+	requestAnimationFrame(frame)
+}
+
+watch(visibleSections, (sections) => {
+	if (sections.has('hook') && displayPercent.value === 0) animatePercent()
+}, { deep: true })
 
 onMounted(() => {
 	const observer = new IntersectionObserver(
@@ -270,6 +337,88 @@ label {
 .sliding-section,
 .misdiagnosis-section {
 	background: #faf8f5;
+}
+
+.hook-section {
+	padding: 80px 24px;
+}
+
+.hook-visual {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-wrap: wrap;
+	gap: 48px;
+	margin-bottom: 48px;
+}
+
+.donut-wrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.donut-label {
+	position: absolute;
+	text-align: center;
+}
+
+.counter {
+	display: block;
+	color: #c97a7a;
+	font-family: 'Playfair Display', serif;
+	font-size: 2.5rem;
+}
+
+.counter-sub {
+	color: #6b5f58;
+	font-family: 'DM Sans', sans-serif;
+	font-size: 0.875rem;
+}
+
+.hook-stats {
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.stat-block {
+	display: flex;
+	flex-direction: column;
+}
+
+.stat-number {
+	color: #2c2825;
+	font-family: 'Playfair Display', serif;
+	font-size: 2.5rem;
+	line-height: 1;
+}
+
+.stat-label {
+	margin-top: 4px;
+	color: #6b5f58;
+	font-family: 'DM Sans', sans-serif;
+	font-size: 0.875rem;
+}
+
+.hook-headline {
+	max-width: 760px;
+	margin: 0 auto 16px;
+	color: #2c2825;
+	font-family: 'Playfair Display', serif;
+	font-size: 2.5rem;
+	text-align: center;
+}
+
+.hook-body {
+	max-width: 620px;
+	margin: 0 auto;
+	color: #6b5f58;
+	font-family: 'DM Sans', sans-serif;
+	font-size: 1.125rem;
+	line-height: 1.7;
+	text-align: center;
 }
 
 .diagnosis-section,
